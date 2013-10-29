@@ -30,8 +30,8 @@ mod 'ploperations/interval', '0.0.1'
 mod 'puppetlabs/inifile', '1.0.0'
 mod 'puppetlabs/firewall'
 mod 'puppetlabs/stdlib', '3.2.0'
-mod 'puppetlabs/vcsrepo'
-mod 'puppetlabs/concat'
+mod 'puppetlabs/vcsrepo', '0.1.2'
+mod 'puppetlabs/concat', '1.0.0'
 mod 'stahnma/epel', '0.0.5'
 mod "hunner/hiera"
 mod "evenup/varnish"
