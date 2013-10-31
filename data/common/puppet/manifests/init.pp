@@ -119,7 +119,7 @@ node default {
         db_password       => $nepho_database_password,
         db_port           => $nepho_database_port,
         app_port          => $default_application_port,
-        app_user          => $nepho_application_user,
+        app_user          => 'vagrant',
         app_group         => $nepho_application_group,
         ruby_version      => $nepho_ruby_version,
         passenger_version => $nepho_passenger_version,
