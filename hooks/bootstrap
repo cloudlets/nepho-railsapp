@@ -157,14 +157,13 @@ function install_packages() {
 }
 
 function populate_hiera() {
-  # puppet-hiera balks at clobbering hiera.yaml files
-  # message info "Creating hiera configuration"
-  # echo -e "---\n:backends:\n  - yaml\n:hierarchy:\n  - common\n\n:yaml:\n  :datadir:" > /etc/hiera.yaml
+  message info "Creating hiera configuration"
+  echo -e "---\n:backends:\n  - yaml\n:hierarchy:\n  - common\n\n:yaml:\n  :datadir:" > /etc/puppet/hiera.yaml
 
-  # if [[ ! -f /etc/puppet/hiera.yaml && -f /etc/hiera.yaml ]]; then
-  #   message info "Symlinking hiera config into /etc/puppet"
-  #   ln -s /etc/hiera.yaml /etc/puppet/hiera.yaml
-  # fi
+  if [[ ! -f /etc/puppet/hiera.yaml && -f /etc/hiera.yaml ]]; then
+    message info "Symlinking hiera config into /etc/puppet"
+    ln -s /etc/puppet/hiera.yaml /etc/hiera.yaml
+  fi
 
   # Populate data from NEPHO_ environment variables
   if [[ ! -s '/var/lib/hiera/common.yaml' ]]; then
