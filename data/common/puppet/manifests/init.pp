@@ -110,7 +110,7 @@ node default {
         instance_role     => $nepho_instance_role,
         app_name          => $nepho_application_name,
         app_repo          => $nepho_application_repo,
-        server_name       => $nepho_external_hostname,
+        server_name       => $::ipaddress,
         db_server         => $nepho_database_host,
         db_root_user      => 'root',
         db_root_password  => $nepho_database_password,
