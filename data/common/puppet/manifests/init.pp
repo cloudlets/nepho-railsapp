@@ -68,41 +68,19 @@ node default {
     }
   }
 
-  if $nepho_instance_role {
-    package { 'update-motd':
-      ensure => 'present',
-    }
-
-    file { '/etc/update-motd.d/90-motd-role':
-      ensure  => 'present',
-      owner   => 'root',
-      group   => 'root',
-      mode    => 0755,
-      content => template('motd-role.erb'),
-      require   => Package['update-motd'],
-      before    => Exec['run-update-motd'],
-      notify    => Exec['run-update-motd'],
-    }
-
-    exec { 'run-update-motd':
-      path        => '/bin:/sbin:/usr/bin:/usr/sbin',
-      command     => 'update-motd',
-      logoutput   => 'on_failure',
-      refreshonly => true,
-    }
-  }
-
   case $nepho_instance_role {
     'varnish': {
       # tier 1
       class { 'varnish':
-        stage             => 'railsapp',
+        stage         => 'railsapp',
+        instance_role => $nepho_instance_role,
       }
     }
     'railsapp': {
       # tier 2
       class { 'nepho_railsapp':
         stage             => 'railsapp',
+        instance_role     => $nepho_instance_role,
         app_name          => $nepho_application_name,
         app_repo          => $nepho_application_repo,
         server_name       => $nepho_external_hostname,
@@ -129,6 +107,7 @@ node default {
       #class { 'varnish': }
       class { 'nepho_railsapp':
         stage             => 'railsapp',
+        instance_role     => $nepho_instance_role,
         app_name          => $nepho_application_name,
         app_repo          => $nepho_application_repo,
         server_name       => $nepho_external_hostname,

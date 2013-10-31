@@ -29,11 +29,11 @@
 #
 # === Authors
 #
-# Author Name <author@domain.com>
+# Steve Huff <steve_huff@harvard.edu>
 #
 # === Copyright
 #
-# Copyright 2011 Your name here, unless otherwise noted.
+# Copyright 2013 President and Fellows of Harvard College
 #
 class nepho_railsapp (
   $app_name,
@@ -55,7 +55,8 @@ class nepho_railsapp (
   $s3_bucket = false,
   $s3_access_key = false,
   $s3_secret_key = false,
-  $ensure = 'present'
+  $ensure = 'present',
+  $instance_role = 'standalone'
 ) {
   class { 'railsapp':
     appname          => $nepho_railsapp::app_name,
@@ -111,6 +112,31 @@ class nepho_railsapp (
     owner   => 'root',
     group   => 'root',
     mode    => '0640',
-    content => template('capistrano-deploy.rb.erb'),
+    content => template('nepho_railsapp/capistrano-deploy.rb.erb'),
   }
+
+  if $nepho_railsapp::instance_role {
+    package { 'update-motd':
+      ensure => 'present',
+    }
+
+    file { '/etc/update-motd.d/90-motd-role':
+      ensure  => 'present',
+      owner   => 'root',
+      group   => 'root',
+      mode    => 0755,
+      content => template('nepho_railsapp/motd-role.erb'),
+      require => Package['update-motd'],
+      before  => Exec['run-update-motd'],
+      notify  => Exec['run-update-motd'],
+    }
+
+    exec { 'run-update-motd':
+      path        => '/bin:/sbin:/usr/bin:/usr/sbin',
+      command     => 'update-motd',
+      logoutput   => 'on_failure',
+      refreshonly => true,
+    }
+  }
+
 }
