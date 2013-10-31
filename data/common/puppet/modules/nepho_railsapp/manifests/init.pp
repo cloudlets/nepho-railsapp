@@ -115,28 +115,32 @@ class nepho_railsapp (
     content => template('nepho_railsapp/capistrano-deploy.rb.erb'),
   }
 
-  if $nepho_railsapp::instance_role {
-    package { 'update-motd':
-      ensure => 'present',
-    }
+  case $::osfamily {
+    'amazon': {
+      package { 'update-motd':
+        ensure => 'present',
+      }
 
-    file { '/etc/update-motd.d/90-motd-role':
-      ensure  => 'present',
-      owner   => 'root',
-      group   => 'root',
-      mode    => 0755,
-      content => template('nepho_railsapp/motd-role.erb'),
-      require => Package['update-motd'],
-      before  => Exec['run-update-motd'],
-      notify  => Exec['run-update-motd'],
-    }
+      file { '/etc/update-motd.d/90-motd-role':
+        ensure  => 'present',
+        owner   => 'root',
+        group   => 'root',
+        mode    => 0755,
+        content => template('nepho_railsapp/motd-role.erb'),
+        require => Package['update-motd'],
+        before  => Exec['run-update-motd'],
+        notify  => Exec['run-update-motd'],
+      }
 
-    exec { 'run-update-motd':
-      path        => '/bin:/sbin:/usr/bin:/usr/sbin',
-      command     => 'update-motd',
-      logoutput   => 'on_failure',
-      refreshonly => true,
+      exec { 'run-update-motd':
+        path        => '/bin:/sbin:/usr/bin:/usr/sbin',
+        command     => 'update-motd',
+        logoutput   => 'on_failure',
+        refreshonly => true,
+      }
+    }
+    default: {
+      notify { "No additional MOTD configuration for '${::osfamily}' platform.": }
     }
   }
-
 }
