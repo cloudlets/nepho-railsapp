@@ -16,6 +16,8 @@ node default {
   $default_application_user  = 'rails'
   $default_application_group = 'rails'
   $default_application_repo  = 'https://github.com/huit/railsapp-myapp.git'
+  $default_deploy_user       = $default_application_user
+  $default_deploy_group      = $default_application_group
   $default_ruby_version      = 'ruby-2.0.0-p247'
   $default_passenger_version = '4.0.20'
   $default_smtp_endpoint     = 'localhost'
@@ -23,13 +25,15 @@ node default {
   $default_smtp_domain       = 'devel.huit.harvard.edu'
 
   # parameters passed from nepho
-  $nepho_instance_role     = hiera('NEPHO_INSTANCE_ROLE')
+  $nepho_instance_role     = hiera('NEPHO_INSTANCE_ROLE','standalone')
   $nepho_external_hostname = hiera('NEPHO_EXTERNAL_HOSTNAME',$::ec2_public_hostname)
   $nepho_backend_hostname  = hiera('NEPHO_BACKEND_HOSTNAME','localhost')
   $nepho_application_name  = hiera('NEPHO_APPLICATION_NAME',$default_application_name)
   $nepho_application_user  = hiera('NEPHO_APPLICATION_USER',$default_application_user)
   $nepho_application_group = hiera('NEPHO_APPLICATION_GROUP',$default_application_group)
   $nepho_application_repo  = hiera('NEPHO_APPLICATION_REPO',$default_application_repo)
+  $nepho_deploy_user       = hiera('NEPHO_DEPLOY_USER',$default_deploy_user)
+  $nepho_deploy_group      = hiera('NEPHO_DEPLOY_GROUP',$default_deploy_group)
   $nepho_ruby_version      = hiera('NEPHO_RUBY_VERSION',$default_ruby_version)
   $nepho_passenger_version = hiera('NEPHO_PASSENGER_VERSION',$default_passenger_version)
   $nepho_database_host     = hiera('NEPHO_DATABASE_HOST',$default_database_host)
@@ -93,6 +97,8 @@ node default {
         db_port           => $nepho_database_port,
         app_port          => $default_application_port,
         app_user          => $nepho_application_user,
+        deploy_user       => $nepho_deploy_user,
+        deploy_group      => $nepho_deploy_group,
         app_group         => $nepho_application_group,
         ruby_version      => $nepho_ruby_version,
         passenger_version => $nepho_passenger_version,
@@ -119,7 +125,9 @@ node default {
         db_password       => $nepho_database_password,
         db_port           => $nepho_database_port,
         app_port          => $default_application_port,
-        app_user          => 'vagrant',
+        app_user          => $default_application_user,
+        deploy_user       => 'vagrant',
+        deploy_group      => $nepho_deploy_group,
         app_group         => $nepho_application_group,
         ruby_version      => $nepho_ruby_version,
         passenger_version => $nepho_passenger_version,

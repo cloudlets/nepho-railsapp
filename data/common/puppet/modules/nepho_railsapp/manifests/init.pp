@@ -49,6 +49,8 @@ class nepho_railsapp (
   $app_port,
   $app_user,
   $app_group,
+  $deploy_user,
+  $deploy_group,
   $ruby_version,
   $passenger_version,
   $admin_email = 'admin@example.com',
@@ -89,15 +91,17 @@ class nepho_railsapp (
     ensure => 'latest',
   }
 
-  augeas { "ec2-user_${nepho_railsapp::app_group}_group":
+  # put the deploy user in the app group
+  augeas { "${nepho_railsapp::deploy_user}_${nepho_railsapp::app_group}_group":
     context => '/files/etc/group',
-    changes => "set ${nepho_railsapp::app_group}/user[00] ec2-user",
-    onlyif  => "match ${nepho_railsapp::app_group}/user[. = \"ec2-user\"] size == 0",
+    changes => "set ${nepho_railsapp::app_group}/user[00] ${nepho_railsapp::deploy_user}",
+    onlyif  => "match ${nepho_railsapp::app_group}/user[. = \"${nepho_railsapp::deploy_user}\"] size == 0",
     incl    => '/etc/group',
     lens    => 'Group.lns',
     require => Class['railsapp'],
   }
 
+  # put the apache user in the app group
   augeas { "apache_${nepho_railsapp::app_group}_group":
     context => '/files/etc/group',
     changes => "set ${nepho_railsapp::app_group}/user[00] apache",
