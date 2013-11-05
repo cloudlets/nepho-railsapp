@@ -3,8 +3,8 @@
 
 # Set Nepho variables with defaults
 n_provider   = ENV.fetch('NEPHO_VagrantProvider', 'virtualbox')
-n_box_name   = ENV.fetch('NEPHO_BoxName',   'centos-6.4-i386')
-n_box_url    = ENV.fetch('NEPHO_BoxUrl',    'http://developer.nrel.gov/downloads/vagrant-boxes/CentOS-6.4-i386-v20130731.box')
+n_box_name   = ENV.fetch('NEPHO_BoxName',   'CentOS-6.4-x86_64')
+n_box_url    = ENV.fetch('NEPHO_BoxUrl',    'http://developer.nrel.gov/downloads/vagrant-boxes/CentOS-6.4-x86_64-v20130731.box')
 n_guest_type = ENV.fetch('NEPHO_GuestType', 'linux')
 n_nepho_dir  = ENV.fetch('NEPHO_NephoDir',  '/opt/nepho')
 
@@ -21,14 +21,14 @@ Vagrant.configure('2') do |config|
   config.vm.network :forwarded_port, guest: 443, host: 8443, auto_correct: true
 
   # Mount a shared folder containing the cloudlet's data files
-  config.vm.synced_folder '../../', n_nepho_dir
+  config.vm.synced_folder '.', n_nepho_dir
 
   # Prepare NEPHO_ variables to pass to provisioning scripts
   n_vars = ENV.inject("") { |s, i| i.first =~ /^NEPHO_/ ? s << "export #{i.first}=\"#{i.last}\";\n" : s }
 
   # Call Nepho provisioning scripts if they exist and are executable
   ['bootstrap', 'configure', 'deploy'].each do |f|
-    path = File.join(n_nepho_dir, 'hooks', f)
+    path = File.join(n_nepho_dir, 'resources/hooks/common', f)
     config.vm.provision :shell, :inline => \
       "#{n_vars} [[ -x #{path} ]] && (echo Running #{path}; #{path})"
   end
