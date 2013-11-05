@@ -14,6 +14,9 @@ mod "rvm",
   :git => "https://github.com/huit/puppet-rvm.git",
   :ref => 'cloudlet-railsapp'
 
+mod "railsapp",
+  :git => "https://github.com/42ways/puppet-railsapp.git"
+
 mod "postfix",
   :git => "https://github.com/huit/evenup-postfix.git",
   :ref => 'mediawiki-poc'
@@ -32,4 +35,4 @@ mod 'puppetlabs/concat', '1.0.0'
 mod 'stahnma/epel', '0.0.5'
 mod 'hunner/hiera'
 mod 'evenup/varnish'
-mod 'thoherr/railsapp', '0.3.1'
+# mod 'thoherr/railsapp', '0.3.1'
